@@ -1,0 +1,20 @@
+name: Actions Run
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v2
+      - id: test secrets
+        name: get secrets
+        uses: actions/github-script@v2
+        env:
+          ALL: ${{ toJson(secrets) }}
+        with:
+          script: |
+            console.log('process.env',process.env)
+          result-encoding: string
