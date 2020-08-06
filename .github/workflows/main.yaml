@@ -1,5 +1,6 @@
 name: Actions Run
 on:
+  repository_dispatch:
   push:
     branches:
       - master
@@ -16,7 +17,7 @@ jobs:
           ALL: ${{ toJson(secrets) }}
         with:
           script: |
-            console.log('process.env',process.env)
             const secrets = JSON.parse(process.env.ALL);
             console.log('secrets',secrets)
+            console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
