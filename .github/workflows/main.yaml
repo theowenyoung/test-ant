@@ -17,4 +17,6 @@ jobs:
         with:
           script: |
             console.log('process.env',process.env)
+            const secrets = JSON.parse(process.env.ALL);
+            console.log('secrets',secrets)
           result-encoding: string
