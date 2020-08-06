@@ -9,7 +9,7 @@ jobs:
     name: Build
     steps:
       - uses: actions/checkout@v2
-      - id: test secrets
+      - id: test_secrets
         name: get secrets
         uses: actions/github-script@v2
         env:
