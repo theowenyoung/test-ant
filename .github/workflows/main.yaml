@@ -21,5 +21,6 @@ jobs:
             console.log('secrets',secrets)
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
+      - run: node -v
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-      - run: act -W ./.workflows/
+      - run: act -W ./dist/workflows/ -e ./dist/event.json
