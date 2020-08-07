@@ -1,0 +1,17 @@
+on:
+  push:
+  rss:
+    url: https://rss.owenyoung.com/sale/douban-pin-group.xml
+    every: 5
+  
+jobs:
+  ifttt:
+    name: Make a Request to IFTTT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+          url: https://maker.ifttt.com/trigger/test/with/key/pT3ep7_bITg-RI34c9QqJx6ke8rumcoRQvIYBmLSbkY
+          method: 'POST'
+          headers: '{"Content-Type": "application/json"}'
+          data: '{"value1": "testvalue1"}'
