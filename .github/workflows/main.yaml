@@ -21,3 +21,5 @@ jobs:
             console.log('secrets',secrets)
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
+      - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+      - run: act -v

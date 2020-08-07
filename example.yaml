@@ -1,6 +1,0 @@
-trigger:
-  type: rss
-  inputs:
-    url: https://rss.xxxx.com
-    every: 5
-  
