@@ -1,6 +1,7 @@
 name: Actions Run
 on:
   repository_dispatch:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -22,5 +23,7 @@ jobs:
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
       - run: node -v
+      - run: yarn
+      - run: node src/index.js
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: act -W ./dist/workflows/ -e ./dist/event.json
