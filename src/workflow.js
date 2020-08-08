@@ -82,7 +82,7 @@ const buildWorkflow = async (options = {}) => {
 
   workflowData.on = { push: null };
   const workflowContent = yaml.safeDump(workflowData);
-  await fs.writeFile(destWorkflowPath, workflowContent);
+  await fs.outputFile(destWorkflowPath, workflowContent);
   return [];
 };
 
