@@ -17,9 +17,6 @@ jobs:
       - id: test_secrets
         name: get secrets
         uses: actions/github-script@v2
-        env:
-          JSON_SECRETS: ${{ toJson(secrets) }}
-          JSON_GITHUB: ${{ toJson(github) }}
         with:
           script: |
             const secrets = JSON.parse(process.env.JSON_SECRETS);
