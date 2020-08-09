@@ -63,6 +63,8 @@ const run = async (options = {}) => {
       for (let index = 0; index < triggers.length; index++) {
         const trigger = triggers[index];
         if (trigger.trigger_name === "webhook") {
+          console.log("trigger.options", trigger.options);
+
           if (trigger.options && trigger.options.event) {
             // specific evetn
             if (trigger.options.event === githubObj.event.action) {
@@ -73,6 +75,8 @@ const run = async (options = {}) => {
           }
         }
       }
+      console.log("isMatchedWebhookEvent", isMatchedWebhookEvent);
+
       return isMatchedWebhookEvent;
     });
   }
