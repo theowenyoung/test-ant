@@ -6,4 +6,5 @@ run({
   logLevel: "trace",
 }).catch((e) => {
   log.error("e", e);
+  throw e;
 });
