@@ -1,5 +1,6 @@
 on:
   push:
+  pull_request:
   rss:
     url: https://rss.owenyoung.com/sale/douban-pin-group.xml
     every: 5
