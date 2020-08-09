@@ -87,7 +87,7 @@ jobs:
           key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}}
           path: .cache
       - name: Save cache key to file
-        run: echo gatsby-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
+        run: mkdir ./public && echo gatsby-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
       - name: Push cache branch
         uses: peaceiris/actions-gh-pages@v3.6.1
         with:
