@@ -31,4 +31,4 @@ jobs:
       - run: yarn build
       - run: cat ./dist/.secrets
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-      - run: act -W ./dist/workflows --secret-file ./dist/.secrets
+      - run: act -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json
