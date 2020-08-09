@@ -63,7 +63,7 @@ jobs:
         if: ${{ steps.latest-cache-key-file-loaded.outcome == 'success' }}
         id: latest-cache-key
         run: echo "::set-output name=result::$(cat $env.LOCAL_CACHE_DIR/$env.CACHE_KEY_FILE)"
-      - run: cat $env.LOCAL_CACHE_DIR/$env.CACHE_KEY_FILE
+      - run: cat $LOCAL_CACHE_DIR/$CACHE_KEY_FILE
       - name: Restore cache directory
         uses: actions/cache@v2
         if: ${{ steps.latest-cache-key.outcome == 'success' }}
