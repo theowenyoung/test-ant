@@ -51,12 +51,13 @@ const run = async (options = {}) => {
   );
 
   const workflowTodos = [];
+  let workflowIndex = 0;
   for (let i = 0; i < needHandledWorkflows.length; i++) {
     const workflow = needHandledWorkflows[i];
     const events = workflow.events || [];
     // manual run trigger
     for (let j = 0; j < events.length; j++) {
-      const event = events[i];
+      const event = events[j];
 
       const triggerResult = await runTrigger(event);
       log.debug("triggerResult", triggerResult);
@@ -64,17 +65,19 @@ const run = async (options = {}) => {
         // check is need to run workflowTodos
         for (let index = 0; index < triggerResult.results.length; index++) {
           const element = triggerResult.results[index];
+
           workflowTodos.push({
             context: context,
             dest: destPath,
             workflow: workflow,
             eventContext: {
-              id: `${index}-${triggerResult.id}-${event.event_name}`,
+              id: `${workflowIndex}-${triggerResult.id}-${event.event_name}`,
               event_name: event.event_name,
               options: event.options,
               payload: element,
             },
           });
+          workflowIndex++;
         }
       }
     }

@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch src src/index.js",
-    "build": "yarn clean && node src/index.js",
-    "clean": "rm -rf ./dist",
+    "build": "yarn clean:dist && node src/index.js",
+    "clean:dist": "rm -rf ./dist",
+    "clean": "yarn clean:dist && rm -rf .cache",
     "act": "act -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

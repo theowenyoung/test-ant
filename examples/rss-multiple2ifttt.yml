@@ -1,0 +1,19 @@
+on:
+  rss:
+    type: new_item_in_multiple_feeds
+    urls:
+      - https://hnrss.org/newest?points=300
+      - https://www.buzzfeed.com/world.xml
+    max_items_count: 15
+jobs:
+  ifttt:
+    name: Make a Request to IFTTT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alfredosalzillo/ifttt-webhook-action@v1
+        with:
+          event: test
+          key: ${{ secrets.IFTTT_KEY }}
+          value1: ${{on.rss.outputs.title}}
+          value2: ${{on.rss.outputs.contentSnippet}}
+          value3: ${{on.rss.outputs.link}}

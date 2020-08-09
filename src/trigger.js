@@ -35,19 +35,23 @@ const run = async (event = {}) => {
       updateInterval,
     } = await triggerInstance.run(triggerOptions);
 
+    const maxItemsCount = event.options.max_items_count;
+    const skipFirst = event.options.skip_first || false;
+
     if (!results || results.length === 0) {
       return finalResult;
     }
     // updateInterval
-
+    const lastUpdatedAt =
+      (await triggerHelpers.cache.get("lastUpdatedAt")) || 0;
+    log.debug("lastUpdatedAt: ", lastUpdatedAt);
+    if (skipFirst && lastUpdatedAt === 0) {
+      return finalResult;
+    }
     if (updateInterval) {
       // check if should update
       // unit minutes
       // get latest update time
-      const lastUpdatedAt =
-        (await triggerHelpers.cache.get("lastUpdatedAt")) || 0;
-
-      log.debug("lastUpdatedAt: ", lastUpdatedAt);
       const shouldUpdateUtil = lastUpdatedAt + updateInterval * 60 * 1000;
       const now = Date.now();
       const shouldUpdate = shouldUpdateUtil - now <= 0;
@@ -87,6 +91,10 @@ const run = async (event = {}) => {
           return true;
         }
       });
+
+      if (maxItemsCount) {
+        results = results.slice(0, maxItemsCount);
+      }
       deduplicationKeys = deduplicationKeys.concat(
         results.map((item) => getItemKey(item))
       );
