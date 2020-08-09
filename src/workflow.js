@@ -93,8 +93,6 @@ const buildWorkflow = async (options = {}) => {
     "workflows",
     `${id}-${relativePathWithoutExt}.yaml`
   );
-  log.debug("destWorkflowPath", destWorkflowPath);
-
   const workflowData = workflow.data;
 
   workflowData.on = { push: null };
@@ -107,8 +105,6 @@ const buildWorkflow = async (options = {}) => {
       },
     },
   };
-  log.debug("context", context);
-
   // handle context expresstion
   const newWorkflowData = mapObj(
     workflowData,

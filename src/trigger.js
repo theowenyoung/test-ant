@@ -1,7 +1,8 @@
 const triggers = require("./triggers");
 const helpers = require("./helpers");
-const log = require("loglevel");
-const { createContentDigest, cache } = helpers;
+const log = require("./log");
+const { createContentDigest, getCache } = helpers;
+const MAX_CACHE_KEYS_COUNT = 1000;
 const run = async (event = {}) => {
   log.debug("event:", event);
   const finalResult = {
@@ -18,14 +19,7 @@ const run = async (event = {}) => {
     finalResult.id = eventId;
     const triggerHelpers = {
       ...helpers,
-      cache: {
-        get: (key) => {
-          return cache.get(`event:${eventId}:${key}`);
-        },
-        set: (key, value) => {
-          return cache.set(`event:${eventId}:${key}`);
-        },
-      },
+      cache: getCache(`event-${eventId}`),
     };
     const triggerOptions = {
       helpers: triggerHelpers,
@@ -45,12 +39,14 @@ const run = async (event = {}) => {
       return finalResult;
     }
     // updateInterval
+
     if (updateInterval) {
       // check if should update
       // unit minutes
       // get latest update time
       const lastUpdatedAt =
         (await triggerHelpers.cache.get("lastUpdatedAt")) || 0;
+
       log.debug("lastUpdatedAt: ", lastUpdatedAt);
       const shouldUpdateUtil = lastUpdatedAt + updateInterval * 60 * 1000;
       const now = Date.now();
@@ -75,7 +71,7 @@ const run = async (event = {}) => {
 
       // deduplicate
       // get cache
-      const deduplicationKeys =
+      let deduplicationKeys =
         (await triggerHelpers.cache.get("deduplicationKeys")) || [];
       const resultsKeyMaps = new Map();
       results.forEach((item, index) => {
@@ -91,6 +87,13 @@ const run = async (event = {}) => {
           return true;
         }
       });
+      deduplicationKeys = deduplicationKeys.concat(
+        results.map((item) => getItemKey(item))
+      );
+      deduplicationKeys = deduplicationKeys.slice(-MAX_CACHE_KEYS_COUNT);
+
+      // set cache
+      await triggerHelpers.cache.set("deduplicationKeys", deduplicationKeys);
     }
     finalResult.results = results;
   }

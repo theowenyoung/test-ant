@@ -31,7 +31,9 @@ module.exports = class {
 
     const getItemKey = (item) => {
       // TODO adapt every cases
-      return item.guid;
+      if (item.guid) return item.guid;
+      if (item.id) return item.id;
+      return helpers.createContentDigest(item);
     };
     // if need
     return {

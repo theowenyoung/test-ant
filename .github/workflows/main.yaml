@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Build
     env:
+      CACHE_BRANCH: cache
+      LOCAL_CACHE_DIR: .last-build-cache
+      CACHE_KEY_FILE: .latest-build-cache-key
       JSON_SECRETS: ${{ toJson(secrets) }}
       JSON_GITHUB: ${{ toJson(github) }}
     steps:
@@ -28,9 +31,67 @@ jobs:
             console.log('github2',JSON.stringify(github2,null,2))
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
+      - id: isCacheBranchExist
+        name: If cache branch exist
+        uses: actions/github-script@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            return github.repos.getBranch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: process.env.CACHE_BRANCH
+            }).then(data=>{
+              return true;
+            }).catch((e)=>{
+              if(e && e.status===404){
+                // then manual trigger
+                return false
+              }else{
+                core.setFailed('check isDeployBranchExist error: ',e.message)
+              }
+            })
+      - name: Get cache key from last build cache key
+        id: latest-cache-key-file-loaded
+        if: steps.isCacheBranchExist.outputs.result == 'true'
+        uses: actions/checkout@v2
+        continue-on-error: true
+        with:
+          ref: ${{ env.CACHE_BRANCH }}
+          path: ${{ env.LOCAL_CACHE_DIR }}
+      - name: Get latest cache key content
+        if: ${{ steps.latest-cache-key-file-loaded.outcome == 'success' }}
+        id: latest-cache-key
+        run: echo "::set-output name=result::$(cat $env.LOCAL_CACHE_DIR/$env.CACHE_KEY_FILE)"
+      - name: Restore cache directory
+        uses: actions/cache@v2
+        if: ${{ steps.latest-cache-key.outcome == 'success' }}
+        with:
+          key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-key.outputs.result }}
+          path: |
+            .cache
       - run: node -v
       - run: yarn
       - run: yarn build
       - run: cat ./dist/.secrets
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: act -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json
+      - name: Get latest cache dir hash
+        id: latest-cache-dir-hash
+        uses: theowenyoung/folder-hash@v2.0.1
+        with:
+          path: .cache
+      - name: Save cache directory
+        uses: actions/cache@v2
+        with:
+          key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}}
+          path: .cache
+      - name: Save cache key to file
+        run: echo gatsby-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
+      - name: Push cache branch
+        uses: peaceiris/actions-gh-pages@v3.6.1
+        with:
+          publish_dir: ./public
+          publish_branch: ${{ env.CACHE_BRANCH }}
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"

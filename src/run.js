@@ -33,14 +33,22 @@ const run = async (options = {}) => {
     src: workflowsPath,
     context,
   });
-  log.debug("workflows", workflows);
   // create workflow dest dir
   await fs.ensureDir(path.resolve(destPath, "workflows"));
 
   const needHandledWorkflows = workflows.filter(
     (item) => item.events.length > 0
   );
-  log.debug("needHandledWorkflows", needHandledWorkflows);
+  log.debug(
+    "needHandledWorkflows",
+    JSON.stringify(
+      needHandledWorkflows.map((item) => {
+        return { relativePath: item.relativePath, events: item.events };
+      }),
+      null,
+      2
+    )
+  );
 
   const workflowTodos = [];
   for (let i = 0; i < needHandledWorkflows.length; i++) {
