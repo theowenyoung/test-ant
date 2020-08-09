@@ -116,17 +116,18 @@ const buildWorkflow = async (options = {}) => {
   const workflowContent = yaml.safeDump(newWorkflowData);
   await fs.outputFile(destWorkflowPath, workflowContent);
   return {
-    workflow:newWorkflowData
+    workflow: newWorkflowData,
   };
 };
-const buildNativeEvent = (options={})=>{
+const buildNativeEvent = async (options = {}) => {
   const baseDest = options.dest;
-  const destWorkflowEventPath = path.resolve(baseDest,eventJson);
-  await fs.outputFile(destWorkflowEventPath, workflowContent);
+  const eventJson = options.eventJson;
+  const destWorkflowEventPath = path.resolve(baseDest, "event.json");
+  await fs.outputFile(destWorkflowEventPath, eventJson);
   return [];
-}
+};
 module.exports = {
   getWorkflows,
   buildWorkflow,
-  buildNativeEvent
+  buildNativeEvent,
 };

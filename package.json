@@ -4,7 +4,7 @@
   "description": "## Features",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "nodemon --watch src src/index.js",
     "build": "node src/index.js",
     "act": "act -W ./dist/workflows",
     "test": "echo \"Error: no test specified\" && exit 1"
