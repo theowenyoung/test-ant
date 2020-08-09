@@ -13,24 +13,28 @@ const getSupportedTriggers = (doc, context) => {
     const keys = Object.keys(doc.on);
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
-      if (supportTriggerTypes.includes(key) && doc.on[key]) {
+      if (supportTriggerTypes.includes(key)) {
         // handle context expresstion
-        const newOptions = mapObj(
-          doc.on[key],
-          (key, value) => {
-            if (typeof value === "string") {
-              // if supported
+        let newOptions = doc.on[key];
+        if (doc.on[key]) {
+          newOptions = mapObj(
+            doc.on[key],
+            (key, value) => {
+              if (typeof value === "string") {
+                // if supported
 
-              value = template(value, context, {
-                shouldReplaceUndefinedToEmpty: true,
-              });
+                value = template(value, context, {
+                  shouldReplaceUndefinedToEmpty: true,
+                });
+              }
+              return [key, value];
+            },
+            {
+              deep: true,
             }
-            return [key, value];
-          },
-          {
-            deep: true,
-          }
-        );
+          );
+        }
+
         // valid event
         triggers.push({
           trigger_name: key,
