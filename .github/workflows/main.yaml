@@ -2,6 +2,7 @@ name: Actions Run
 on:
   repository_dispatch:
   workflow_dispatch:
+  pull_request:
   push:
     branches:
       - master
