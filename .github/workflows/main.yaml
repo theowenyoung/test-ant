@@ -89,7 +89,7 @@ jobs:
           path: .cache
       - name: Save cache key to file
         if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
-        run: mkdir ./public && echo gatsby-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
+        run: mkdir ./public && echo cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
       - name: Push cache branch
         if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: peaceiris/actions-gh-pages@v3.6.4
