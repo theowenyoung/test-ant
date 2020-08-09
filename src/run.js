@@ -53,6 +53,7 @@ const run = async (options = {}) => {
             eventContext: {
               id: `${event.event_name}-${triggerResult.id}-${index}`,
               event_name: event.event_name,
+              options: event.options,
               payload: element,
             },
           });

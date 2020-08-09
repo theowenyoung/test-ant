@@ -64,7 +64,7 @@ const getWorkflows = async (options = {}) => {
 const buildWorkflow = async (options = {}) => {
   log.debug("buildWorkflow options:", options);
   const {
-    eventContext: { event, payload, id },
+    eventContext: { event_name, payload, id },
     workflow,
     dest,
   } = options;
@@ -83,6 +83,14 @@ const buildWorkflow = async (options = {}) => {
 
   workflowData.on = { push: null };
   console.log("workflowData", JSON.stringify(workflowData, null, 2));
+  const context = {
+    on: {
+      [event_name]: {
+        outputs: payload,
+        options: options.eventContext.options,
+      },
+    },
+  };
   // handle context expresstion
   const newWorkflowData = mapObj(
     workflowData,
@@ -90,19 +98,9 @@ const buildWorkflow = async (options = {}) => {
       if (typeof value === "string") {
         // if supported
 
-        value = template(
-          value,
-          {
-            on: {
-              [event]: {
-                outputs: payload,
-              },
-            },
-          },
-          {
-            shouldReplaceUndefinedToEmpty: true,
-          }
-        );
+        value = template(value, context, {
+          shouldReplaceUndefinedToEmpty: true,
+        });
       }
       return [key, value];
     },
