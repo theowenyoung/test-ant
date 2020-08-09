@@ -65,7 +65,7 @@ const run = async (options = {}) => {
         if (trigger.trigger_name === "webhook") {
           if (trigger.options && trigger.options.event) {
             // specific evetn
-            if (trigger.options.event === githubObj.event_name) {
+            if (trigger.options.event === githubObj.event.action) {
               isMatchedWebhookEvent = true;
             }
           } else {
