@@ -60,6 +60,8 @@ const run = async (options = {}) => {
     needHandledWorkflows = needHandledWorkflows.filter((item) => {
       const triggers = item.triggers;
       let isMatchedWebhookEvent = false;
+      console.log("triggers", triggers);
+
       for (let index = 0; index < triggers.length; index++) {
         const trigger = triggers[index];
         if (trigger.trigger_name === "webhook") {
