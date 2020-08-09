@@ -63,7 +63,7 @@ const run = async (options = {}) => {
   // build native event
   await buildNativeEvent({
     dest: destPath,
-    eventJson: "",
+    githubJson: process.env.JSON_GITHUB,
   });
   // build secret
 

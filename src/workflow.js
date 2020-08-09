@@ -54,7 +54,7 @@ const getWorkflows = async (options = {}) => {
         log.debug("skip empty file", filePath);
       }
     } catch (e) {
-      log.error("load yaml file error:", e);
+      log.error("load yaml file error:", filePath, e);
     }
   }
 
@@ -121,9 +121,23 @@ const buildWorkflow = async (options = {}) => {
 };
 const buildNativeEvent = async (options = {}) => {
   const baseDest = options.dest;
-  const eventJson = options.eventJson;
+  const githubJson = options.githubJson;
   const destWorkflowEventPath = path.resolve(baseDest, "event.json");
-  await fs.outputFile(destWorkflowEventPath, eventJson);
+  let eventJSON = "{}";
+  let github = {};
+  try {
+    github = JSON.parse(githubJson);
+    if (!github) {
+      github = {};
+    }
+  } catch (error) {
+    log.error("parse JSON_GITHUB error:", error);
+    throw error;
+  }
+  await fs.outputFile(
+    destWorkflowEventPath,
+    JSON.stringify(github.event, null, 2)
+  );
   return {
     path: destWorkflowEventPath,
     eventJson: eventJson,
@@ -136,7 +150,8 @@ const buildNativeSecrets = async (options = {}) => {
   try {
     secretsObj = JSON.parse(secretsJson);
   } catch (error) {
-    log.error("parse secret json error:", error);
+    log.error("parse SECRETS_JSON json error:", error);
+    throw error;
   }
 
   const destWorkflowSecretsPath = path.resolve(baseDest, ".secrets");
