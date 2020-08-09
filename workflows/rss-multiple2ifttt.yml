@@ -1,6 +1,6 @@
 on:
   rss:
-    type: new_item_in_multiple_feeds
+    event: new_item_in_multiple_feeds
     urls:
       - https://rss.owenyoung.com/sale/douban-pin-group.xml
       - https://rss.owenyoung.com/sale/douban-driver-group.xml

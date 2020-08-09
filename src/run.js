@@ -37,13 +37,13 @@ const run = async (options = {}) => {
   await fs.ensureDir(path.resolve(destPath, "workflows"));
 
   const needHandledWorkflows = workflows.filter(
-    (item) => item.events.length > 0
+    (item) => item.triggers.length > 0
   );
   log.debug(
     "needHandledWorkflows",
     JSON.stringify(
       needHandledWorkflows.map((item) => {
-        return { relativePath: item.relativePath, events: item.events };
+        return { relativePath: item.relativePath, triggers: item.triggers };
       }),
       null,
       2
@@ -54,15 +54,15 @@ const run = async (options = {}) => {
   let workflowIndex = 0;
   for (let i = 0; i < needHandledWorkflows.length; i++) {
     const workflow = needHandledWorkflows[i];
-    const events = workflow.events || [];
+    const triggers = workflow.triggers || [];
     // manual run trigger
-    for (let j = 0; j < events.length; j++) {
-      const event = events[j];
+    for (let j = 0; j < triggers.length; j++) {
+      const trigger = triggers[j];
       let triggerResult = {
         results: [],
       };
       try {
-        triggerResult = await runTrigger(event);
+        triggerResult = await runTrigger(trigger);
         log.debug("triggerResult", triggerResult);
       } catch (error) {
         throw error;
@@ -74,15 +74,13 @@ const run = async (options = {}) => {
           const element = triggerResult.results[index];
 
           workflowTodos.push({
-            context: context,
             dest: destPath,
             workflow: workflow,
-            eventContext: {
-              id: `${workflowIndex}-${triggerResult.id}-${event.event_name}`,
-              event_name: event.event_name,
-              options: event.options,
-              payload: element,
-            },
+            id: `${workflowIndex}-${triggerResult.id}-${trigger.trigger_name}`,
+            trigger_name: trigger.trigger_name,
+            options: trigger.options,
+            payload: element,
+            context: context,
           });
           workflowIndex++;
         }

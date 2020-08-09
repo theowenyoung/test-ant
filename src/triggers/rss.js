@@ -2,14 +2,12 @@ const Parser = require("rss-parser");
 const log = require("../log");
 module.exports = class {
   async run({ helpers, options }) {
-    const type = options.type || "new_item";
+    const event = options.event || "new_item";
     const url = options.url;
     const updateInterval = options.every || 5;
-    const maxItemsCount = options.max_items_count;
-    const skipFirst = options.skip_first || false;
     let urls = [];
 
-    if (type === "new_item_in_multiple_feeds") {
+    if (event === "new_item_in_multiple_feeds") {
       let urlsParam = options.urls;
       if (!urlsParam) {
         throw new Error("Miss param urls");

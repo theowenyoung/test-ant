@@ -4,15 +4,16 @@ const yaml = require("js-yaml");
 const mapObj = require("map-obj");
 const fs = require("fs-extra");
 const log = require("./log");
-const supportEventTypes = ["rss"];
 const { template } = require("./util");
-const getSupportedEvents = (doc, context) => {
-  const events = [];
+const Triggers = require("./triggers");
+const getSupportedTriggers = (doc, context) => {
+  const supportTriggerTypes = Object.keys(Triggers);
+  const triggers = [];
   if (doc && doc.on) {
     const keys = Object.keys(doc.on);
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
-      if (supportEventTypes.includes(key)) {
+      if (supportTriggerTypes.includes(key)) {
         // handle context expresstion
         const newOptions = mapObj(
           doc.on[key],
@@ -31,14 +32,14 @@ const getSupportedEvents = (doc, context) => {
           }
         );
         // valid event
-        events.push({
-          event_name: key,
+        triggers.push({
+          trigger_name: key,
           options: newOptions,
         });
       }
     }
   }
-  return events;
+  return triggers;
 };
 const getWorkflows = async (options = {}) => {
   if (!options.src) {
@@ -58,12 +59,12 @@ const getWorkflows = async (options = {}) => {
     try {
       const doc = yaml.safeLoad(await fs.readFile(filePath, "utf8"));
       if (doc) {
-        let events = getSupportedEvents(doc, context);
+        let triggers = getSupportedTriggers(doc, context);
         workflows.push({
           path: filePath,
           relativePath: entries[index],
           data: doc,
-          events: events,
+          triggers: triggers,
         });
       } else {
         log.debug("skip empty file", filePath);
@@ -79,10 +80,12 @@ const getWorkflows = async (options = {}) => {
 const buildWorkflow = async (options = {}) => {
   log.debug("buildWorkflow options:", options);
   const {
-    eventContext: { event_name, payload, id },
     context: workflowContext,
     workflow,
     dest,
+    trigger_name,
+    payload,
+    id,
   } = options;
   const relativePathWithoutExt = workflow.relativePath
     .split(".")
@@ -99,9 +102,9 @@ const buildWorkflow = async (options = {}) => {
   const context = {
     ...workflowContext,
     on: {
-      [event_name]: {
+      [trigger_name]: {
         outputs: payload,
-        options: options.eventContext.options,
+        options: options.options,
       },
     },
   };

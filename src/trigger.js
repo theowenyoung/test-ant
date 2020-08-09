@@ -3,29 +3,29 @@ const helpers = require("./helpers");
 const log = require("./log");
 const { createContentDigest, getCache } = helpers;
 const MAX_CACHE_KEYS_COUNT = 1000;
-const run = async (event = {}) => {
-  log.debug("event:", event);
+const run = async (trigger = {}) => {
+  log.debug("trigger:", trigger);
   const finalResult = {
     results: [],
   };
-  if (triggers[event.event_name]) {
+  if (triggers[trigger.trigger_name]) {
     // get unique id
-    let eventId = "";
-    if (event.options && event.options.id) {
-      eventId = event.options.id;
+    let triggerId = "";
+    if (trigger.options && trigger.options.id) {
+      triggerId = trigger.options.id;
     } else {
-      eventId = createContentDigest(event);
+      triggerId = createContentDigest(trigger);
     }
-    finalResult.id = eventId;
+    finalResult.id = triggerId;
     const triggerHelpers = {
       ...helpers,
-      cache: getCache(`event-${eventId}`),
+      cache: getCache(`trigger-${triggerId}`),
     };
     const triggerOptions = {
       helpers: triggerHelpers,
-      options: event.options,
+      options: trigger.options,
     };
-    const Trigger = triggers[event.event_name];
+    const Trigger = triggers[trigger.trigger_name];
     const triggerInstance = new Trigger();
 
     let {
@@ -35,8 +35,8 @@ const run = async (event = {}) => {
       updateInterval,
     } = await triggerInstance.run(triggerOptions);
 
-    const maxItemsCount = event.options.max_items_count;
-    const skipFirst = event.options.skip_first || false;
+    const maxItemsCount = trigger.options.max_items_count;
+    const skipFirst = trigger.options.skip_first || false;
 
     if (!results || results.length === 0) {
       return finalResult;
@@ -63,7 +63,7 @@ const run = async (event = {}) => {
       }
     }
     // duplicate
-    if (shouldDeduplicate === true || shouldDeduplicate === undefined) {
+    if (shouldDeduplicate === true) {
       // duplicate
       getItemKey =
         getItemKey ||

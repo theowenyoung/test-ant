@@ -1,6 +1,6 @@
 on:
   rss:
-    type: new_item_in_multiple_feeds
+    event: new_item_in_multiple_feeds
     urls:
       - https://hnrss.org/newest?points=300
       - https://www.buzzfeed.com/world.xml
