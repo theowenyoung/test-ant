@@ -149,6 +149,8 @@ const buildNativeEvent = async (options = {}) => {
   }
   eventJson = JSON.stringify(github.event, null, 2);
   await fs.outputFile(destWorkflowEventPath, eventJson);
+  log.debug("build event file success", destWorkflowEventPath);
+
   return {
     path: destWorkflowEventPath,
     eventJson: eventJson,
@@ -171,6 +173,7 @@ const buildNativeSecrets = async (options = {}) => {
     secrets += key + "=" + secretsObj[key] + "\n";
   });
   await fs.outputFile(destWorkflowSecretsPath, secrets);
+  log.debug("build secrets file success", destWorkflowSecretsPath);
   return {
     path: destWorkflowSecretsPath,
     secrets: secrets,
