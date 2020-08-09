@@ -15,11 +15,14 @@ jobs:
         name: get secrets
         uses: actions/github-script@v2
         env:
-          ALL: ${{ toJson({secrets,github}) }}
+          JSON_SECRETS: ${{ toJson(secrets) }}
+          JSON_GITHUB: ${{ toJson(github) }}
         with:
           script: |
-            const secrets = JSON.parse(process.env.ALL);
+            const secrets = JSON.parse(process.env.JSON_SECRETS);
+            const github = JSON.parse(process.env.JSON_GITHUB);
             console.log('secrets',secrets)
+            console.log('github',JSON.stringify(github,null,2))
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
       - run: node -v
