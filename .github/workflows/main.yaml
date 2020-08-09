@@ -63,6 +63,7 @@ jobs:
         if: ${{ steps.latest-cache-key-file-loaded.outcome == 'success' }}
         id: latest-cache-key
         run: echo "::set-output name=result::$(cat $env.LOCAL_CACHE_DIR/$env.CACHE_KEY_FILE)"
+      - run: cat $env.LOCAL_CACHE_DIR/$env.CACHE_KEY_FILE
       - name: Restore cache directory
         uses: actions/cache@v2
         if: ${{ steps.latest-cache-key.outcome == 'success' }}
@@ -81,6 +82,9 @@ jobs:
         uses: theowenyoung/folder-hash@v2.0.1
         with:
           path: .cache
+      - run: echo $HASH_TEST
+        env:
+          HASH_TEST: ${{ steps.latest-cache-dir-hash.outputs.hash }}
       - name: Save cache directory
         if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
