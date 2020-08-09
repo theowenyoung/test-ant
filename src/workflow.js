@@ -15,7 +15,7 @@ const getSupportedEvents = (doc) => {
       if (supportEventTypes.includes(key)) {
         // valid event
         events.push({
-          event: key,
+          event_name: key,
           options: doc.on[key],
         });
       }

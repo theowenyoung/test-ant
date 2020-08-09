@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs-extra");
 const {
   buildWorkflow,
   getWorkflows,
@@ -24,6 +25,8 @@ const run = async (options = {}) => {
     src: workflowsPath,
   });
   log.debug("workflows", workflows);
+  // create workflow dest dir
+  await fs.ensureDir(path.resolve(destPath, "workflows"));
 
   const needHandledWorkflows = workflows.filter(
     (item) => item.events.length > 0
@@ -48,8 +51,8 @@ const run = async (options = {}) => {
             dest: destPath,
             workflow: workflow,
             eventContext: {
-              id: `${event.event}-${triggerResult.id}-${index}`,
-              event: event.event,
+              id: `${event.event_name}-${triggerResult.id}-${index}`,
+              event_name: event.event_name,
               payload: element,
             },
           });

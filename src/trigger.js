@@ -7,7 +7,7 @@ const run = async (event = {}) => {
   const finalResult = {
     results: [],
   };
-  if (triggers[event.event]) {
+  if (triggers[event.event_name]) {
     // get unique id
     let eventId = "";
     if (event.options && event.options.id) {
@@ -31,7 +31,7 @@ const run = async (event = {}) => {
       helpers: triggerHelpers,
       options: event.options,
     };
-    const Trigger = triggers[event.event];
+    const Trigger = triggers[event.event_name];
     const triggerInstance = new Trigger();
 
     let {

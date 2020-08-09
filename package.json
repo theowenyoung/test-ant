@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --watch src src/index.js",
     "build": "node src/index.js",
-    "act": "act -W ./dist/workflows",
+    "act": "act -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

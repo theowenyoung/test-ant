@@ -28,7 +28,6 @@ const template = function (text, object, options) {
     shouldReplaceUndefinedToEmpty,
   }) => {
     if (shouldReplaceUndefinedToEmpty) {
-      console.log("object", object, regexResult[1]);
       const functionRegex = /toJson\(([\S\s]*?)\)/;
       const matched = functionRegex.exec(regexResult[1]);
       let variableName = regexResult[1];
