@@ -38,7 +38,7 @@ const getSupportedTriggers = (doc, context) => {
         // valid event
         triggers.push({
           trigger_name: key,
-          options: newOptions,
+          options: newOptions || {},
         });
       }
     }
