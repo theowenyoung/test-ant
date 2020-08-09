@@ -17,6 +17,7 @@ jobs:
           JSON_SECRETS: ${{ toJson(secrets) }}
           JSON_GITHUB: ${{ toJson(github) }}
         with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const secrets = JSON.parse(process.env.JSON_SECRETS);
             const github2 = JSON.parse(process.env.JSON_GITHUB);

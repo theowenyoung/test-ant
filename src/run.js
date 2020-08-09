@@ -1,5 +1,10 @@
 const path = require("path");
-const { buildWorkflow, getWorkflows, buildNativeEvent } = require("./workflow");
+const {
+  buildWorkflow,
+  getWorkflows,
+  buildNativeEvent,
+  buildNativeSecrets,
+} = require("./workflow");
 const { run: runTrigger } = require("./trigger");
 const log = require("./log");
 const run = async (options = {}) => {
@@ -59,6 +64,12 @@ const run = async (options = {}) => {
   await buildNativeEvent({
     dest: destPath,
     eventJson: "",
+  });
+  // build secret
+
+  await buildNativeSecrets({
+    dest: destPath,
+    secretsJson: process.env.JSON_SECRETS,
   });
 };
 

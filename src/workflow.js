@@ -124,10 +124,35 @@ const buildNativeEvent = async (options = {}) => {
   const eventJson = options.eventJson;
   const destWorkflowEventPath = path.resolve(baseDest, "event.json");
   await fs.outputFile(destWorkflowEventPath, eventJson);
-  return [];
+  return {
+    path: destWorkflowEventPath,
+    eventJson: eventJson,
+  };
+};
+const buildNativeSecrets = async (options = {}) => {
+  const baseDest = options.dest;
+  const secretsJson = options.secretsJson;
+  let secretsObj = {};
+  try {
+    secretsObj = JSON.parse(secretsJson);
+  } catch (error) {
+    log.error("parse secret json error:", error);
+  }
+
+  const destWorkflowSecretsPath = path.resolve(baseDest, ".secrets");
+  let secrets = "";
+  Object.keys(secretsObj).forEach((key) => {
+    secrets += key + "=" + secretsObj[key] + "\n";
+  });
+  await fs.outputFile(destWorkflowSecretsPath, secrets);
+  return {
+    path: destWorkflowSecretsPath,
+    secrets: secrets,
+  };
 };
 module.exports = {
   getWorkflows,
   buildWorkflow,
   buildNativeEvent,
+  buildNativeSecrets,
 };
