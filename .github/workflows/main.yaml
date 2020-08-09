@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
+    env:
+      JSON_SECRETS: ${{ toJson(secrets) }}
+      JSON_GITHUB: ${{ toJson(github) }}
     steps:
       - uses: actions/checkout@v2
       - id: test_secrets
@@ -28,9 +31,6 @@ jobs:
       - run: node -v
       - run: yarn
       - run: yarn build
-        env:
-          JSON_SECRETS: ${{ toJson(secrets) }}
-          JSON_GITHUB: ${{ toJson(github) }}
       - run: cat ./dist/.secrets
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
       - run: act -W ./dist/workflows --secret-file ./dist/.secrets
