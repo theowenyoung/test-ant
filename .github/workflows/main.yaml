@@ -89,7 +89,7 @@ jobs:
       - name: Save cache key to file
         run: mkdir ./public && echo gatsby-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
       - name: Push cache branch
-        uses: peaceiris/actions-gh-pages@v3.6.1
+        uses: peaceiris/actions-gh-pages@v3.6.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
