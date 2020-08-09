@@ -29,8 +29,11 @@
     "fast-glob": "^3.2.4",
     "fs-extra": "^9.0.1",
     "js-yaml": "^3.14.0",
+    "lodash.has": "^4.5.2",
+    "lodash.template": "^4.5.0",
     "loglevel": "^1.6.8",
     "loglevel-plugin-prefix": "^0.8.4",
+    "map-obj": "^4.1.0",
     "node-object-hash": "^2.0.0"
   }
 }

@@ -15,7 +15,7 @@ jobs:
         name: get secrets
         uses: actions/github-script@v2
         env:
-          ALL: ${{ toJson(secrets) }}
+          ALL: ${{ toJson({secrets,github}) }}
         with:
           script: |
             const secrets = JSON.parse(process.env.ALL);

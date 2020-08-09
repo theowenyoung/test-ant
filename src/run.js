@@ -1,5 +1,5 @@
 const path = require("path");
-const { buildWorkflow, getWorkflows } = require("./workflow");
+const { buildWorkflow, getWorkflows, buildNativeEvent } = require("./workflow");
 const { run: runTrigger } = require("./trigger");
 const log = require("./log");
 const run = async (options = {}) => {
@@ -25,7 +25,7 @@ const run = async (options = {}) => {
   );
   log.debug("needHandledWorkflows", needHandledWorkflows);
 
-  const actions = [];
+  const workflowTodos = [];
   for (let i = 0; i < needHandledWorkflows.length; i++) {
     const workflow = needHandledWorkflows[i];
     const events = workflow.events || [];
@@ -36,10 +36,10 @@ const run = async (options = {}) => {
       const triggerResult = await runTrigger(event);
       log.debug("triggerResult", triggerResult);
       if (triggerResult.results.length > 0) {
-        // check is need to run actions
+        // check is need to run workflowTodos
         for (let index = 0; index < triggerResult.results.length; index++) {
           const element = triggerResult.results[index];
-          actions.push({
+          workflowTodos.push({
             dest: destPath,
             workflow: workflow,
             eventContext: {
@@ -52,9 +52,14 @@ const run = async (options = {}) => {
       }
     }
   }
-  for (let i = 0; i < actions.length; i++) {
-    await buildWorkflow(actions[i]);
+  for (let i = 0; i < workflowTodos.length; i++) {
+    await buildWorkflow(workflowTodos[i]);
   }
+  // build native event
+  await buildNativeEvent({
+    dest: destPath,
+    eventJson: "",
+  });
 };
 
 module.exports = run;

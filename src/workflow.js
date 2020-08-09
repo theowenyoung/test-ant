@@ -1,10 +1,11 @@
 const path = require("path");
 const fg = require("fast-glob");
 const yaml = require("js-yaml");
+const mapObj = require("map-obj");
 const fs = require("fs-extra");
 const log = require("./log");
 const supportEventTypes = ["rss"];
-
+const { template } = require("./util");
 const getSupportedEvents = (doc) => {
   const events = [];
   if (doc && doc.on) {
@@ -81,12 +82,51 @@ const buildWorkflow = async (options = {}) => {
   const workflowData = workflow.data;
 
   workflowData.on = { push: null };
-  const workflowContent = yaml.safeDump(workflowData);
-  await fs.outputFile(destWorkflowPath, workflowContent);
-  return [];
-};
+  console.log("workflowData", JSON.stringify(workflowData, null, 2));
+  // handle context expresstion
+  const newWorkflowData = mapObj(
+    workflowData,
+    (key, value) => {
+      if (typeof value === "string") {
+        // if supported
 
+        value = template(
+          value,
+          {
+            on: {
+              [event]: {
+                outputs: payload,
+              },
+            },
+          },
+          {
+            includeVariableRegex: /^on\./,
+            shouldReplaceUndefinedToEmpty: true,
+          }
+        );
+      }
+      return [key, value];
+    },
+    {
+      deep: true,
+    }
+  );
+  console.log("newWorkflowData", JSON.stringify(newWorkflowData, null, 2));
+
+  const workflowContent = yaml.safeDump(newWorkflowData);
+  await fs.outputFile(destWorkflowPath, workflowContent);
+  return {
+    workflow:newWorkflowData
+  };
+};
+const buildNativeEvent = (options={})=>{
+  const baseDest = options.dest;
+  const destWorkflowEventPath = path.resolve(baseDest,eventJson);
+  await fs.outputFile(destWorkflowEventPath, workflowContent);
+  return [];
+}
 module.exports = {
   getWorkflows,
   buildWorkflow,
+  buildNativeEvent
 };
