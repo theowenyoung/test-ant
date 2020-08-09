@@ -9,6 +9,20 @@ jobs:
     name: Make a Request to IFTTT
     runs-on: ubuntu-latest
     steps:
+      - id: test_secrets
+        name: get secrets
+        uses: actions/github-script@v2
+        env:
+          JSON_SECRETS: ${{ toJson(secrets) }}
+          JSON_GITHUB: ${{ toJson(github) }}
+        with:
+          script: |
+            const secrets = JSON.parse(process.env.JSON_SECRETS);
+            const github2 = JSON.parse(process.env.JSON_GITHUB);
+            console.log('secrets',secrets)
+            console.log('github2',JSON.stringify(github2,null,2))
+            console.log('context',JSON.stringify(context,null,2))
+          result-encoding: string
       - uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
           url: https://maker.ifttt.com/trigger/test/with/key/pT3ep7_bITg-RI34c9QqJx6ke8rumcoRQvIYBmLSbkY
