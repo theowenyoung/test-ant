@@ -29,8 +29,8 @@ jobs:
           result-encoding: string
       - uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
+          verbose: "true"
           url: https://maker.ifttt.com/trigger/test/with/key/pT3ep7_bITg-RI34c9QqJx6ke8rumcoRQvIYBmLSbkY
           method: "POST"
-          test: "${{github.test}}"
           headers: '{"Content-Type": "application/json"}'
-          data: '{"value1": "testvalue1","value2":"${{on.rss.outputs.title}}"}'
+          data: '{"value1": "${{on.rss.outputs.title}}","value2":"${{on.rss.outputs.content}}","value3":"${{on.rss.outputs.link}}"}'
