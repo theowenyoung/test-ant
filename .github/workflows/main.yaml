@@ -20,9 +20,9 @@ jobs:
         with:
           script: |
             const secrets = JSON.parse(process.env.JSON_SECRETS);
-            const github = JSON.parse(process.env.JSON_GITHUB);
+            const github2 = JSON.parse(process.env.JSON_GITHUB);
             console.log('secrets',secrets)
-            console.log('github',JSON.stringify(github,null,2))
+            console.log('github2',JSON.stringify(github2,null,2))
             console.log('context',JSON.stringify(context,null,2))
           result-encoding: string
       - run: node -v
