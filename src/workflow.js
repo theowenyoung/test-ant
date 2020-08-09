@@ -100,7 +100,6 @@ const buildWorkflow = async (options = {}) => {
             },
           },
           {
-            includeVariableRegex: /^on\./,
             shouldReplaceUndefinedToEmpty: true,
           }
         );

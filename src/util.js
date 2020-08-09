@@ -1,7 +1,7 @@
 const has = require("lodash.has");
 
 const template = function (text, object, options) {
-  let includeVariableRegex;
+  let includeVariableRegex = /(^on)|(^toJson\(on\.?)/;
   let interpolate = /\$\{\{([\S\s]*?)\}\}/g;
   let shouldReplaceUndefinedToEmpty = false;
   if (options) {
@@ -28,7 +28,14 @@ const template = function (text, object, options) {
     shouldReplaceUndefinedToEmpty,
   }) => {
     if (shouldReplaceUndefinedToEmpty) {
-      if (has(object, regexResult[1])) {
+      console.log("object", object, regexResult[1]);
+      const functionRegex = /toJson\(([\S\s]*?)\)/;
+      const matched = functionRegex.exec(regexResult[1]);
+      let variableName = regexResult[1];
+      if (matched) {
+        variableName = matched[1];
+      }
+      if (has(object, variableName)) {
         return [
           stringify(
             text.slice(currentIndex, regex.lastIndex - regexResult[0].length)
@@ -82,7 +89,10 @@ const template = function (text, object, options) {
   }
   evaluate.push(stringify(text.slice(i)));
   // Function is needed to opt out from possible "use strict" directive
-  return Function("with(this)return" + evaluate.join("+")).call(object);
+  return Function(
+    "var toJson = function(obj){return JSON.stringify(obj,null,2)};with(this)return" +
+      evaluate.join("+")
+  ).call(object);
 };
 
 module.exports = {
