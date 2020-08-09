@@ -123,7 +123,7 @@ const buildNativeEvent = async (options = {}) => {
   const baseDest = options.dest;
   const githubJson = options.githubJson;
   const destWorkflowEventPath = path.resolve(baseDest, "event.json");
-  let eventJSON = "{}";
+  let eventJson = "{}";
   let github = {};
   try {
     github = JSON.parse(githubJson);
@@ -134,10 +134,8 @@ const buildNativeEvent = async (options = {}) => {
     log.error("parse JSON_GITHUB error:", error);
     throw error;
   }
-  await fs.outputFile(
-    destWorkflowEventPath,
-    JSON.stringify(github.event, null, 2)
-  );
+  eventJson = JSON.stringify(github.event, null, 2);
+  await fs.outputFile(destWorkflowEventPath, eventJson);
   return {
     path: destWorkflowEventPath,
     eventJson: eventJson,
