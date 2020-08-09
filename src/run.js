@@ -58,9 +58,16 @@ const run = async (options = {}) => {
     // manual run trigger
     for (let j = 0; j < events.length; j++) {
       const event = events[j];
+      let triggerResult = {
+        results: [],
+      };
+      try {
+        triggerResult = await runTrigger(event);
+        log.debug("triggerResult", triggerResult);
+      } catch (error) {
+        throw error;
+      }
 
-      const triggerResult = await runTrigger(event);
-      log.debug("triggerResult", triggerResult);
       if (triggerResult.results.length > 0) {
         // check is need to run workflowTodos
         for (let index = 0; index < triggerResult.results.length; index++) {

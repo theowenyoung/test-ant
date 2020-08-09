@@ -1,4 +1,5 @@
 const Parser = require("rss-parser");
+const log = require("../log");
 module.exports = class {
   async run({ helpers, options }) {
     const type = options.type || "new_item";
@@ -43,10 +44,10 @@ module.exports = class {
           );
         }
 
-        throw e;
+        log.error("fetch rss feed error: ", e);
       }
       // For now we just take the items and ignore everything else
-      if (feed.items) {
+      if (feed && feed.items) {
         feed.items.forEach((item) => {
           // @ts-ignore
           results.push(item);
