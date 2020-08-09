@@ -85,6 +85,9 @@ jobs:
       - run: echo $HASH_TEST
         env:
           HASH_TEST: ${{ steps.latest-cache-dir-hash.outputs.hash }}
+      - run: echo $TTT
+        env:
+          TTT: ${{steps.latest-cache-key.outputs.result}}
       - name: Save cache directory
         if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
