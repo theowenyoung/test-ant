@@ -8,9 +8,9 @@
 
 ## Supported Triggers
 
-- rss
+- [rss](/docs/events/rss.md)
 - json
-- webhooks(ifttt demo)
+- [webhook](/docs/events/webhook.md)
 
 ## Supported Actions
 

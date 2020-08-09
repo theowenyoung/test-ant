@@ -1,6 +1,5 @@
 on:
   webhook:
-    event: test
 jobs:
   ifttt:
     name: Make a Request to IFTTT
