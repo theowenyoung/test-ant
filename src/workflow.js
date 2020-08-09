@@ -13,7 +13,7 @@ const getSupportedTriggers = (doc, context) => {
     const keys = Object.keys(doc.on);
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
-      if (supportTriggerTypes.includes(key)) {
+      if (supportTriggerTypes.includes(key) && doc.on[key]) {
         // handle context expresstion
         const newOptions = mapObj(
           doc.on[key],
