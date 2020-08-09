@@ -1,6 +1,6 @@
 on:
   webhook:
-    event_type: test
+    event: test
 jobs:
   ifttt:
     name: Make a Request to IFTTT
@@ -10,5 +10,6 @@ jobs:
         with:
           event: test
           key: ${{ secrets.IFTTT_KEY }}
-          value1: ${{toJson(on.webhook.outputs.payload)}}
-          value2: ${{toJson(on.webhook.outputs.body)}}
+          value1: ${{ on.webhook.outputs.event }}
+          value2: ${{ toJson(on.webhook.outputs.payload) }}
+          value3: ${{ toJson(on.webhook.outputs.body) }}

@@ -17,6 +17,16 @@ const run = async (options = {}) => {
     ...options,
   };
   log.setLevel(options.logLevel);
+  let githubObj = {};
+  try {
+    githubObj = JSON.parse(process.env.JSON_GITHUB);
+    if (!githubObj) {
+      githubObj = {};
+    }
+  } catch (error) {
+    log.error("parse JSON_GITHUB error:", error);
+    throw error;
+  }
   const { base } = options;
   const workflowsPath = path.resolve(base, options.workflows);
   const destPath = path.resolve(base, options.dest);
@@ -28,7 +38,11 @@ const run = async (options = {}) => {
   }
   const context = {
     secrets: secretObj,
+    github: githubObj,
   };
+  // if webhook event
+  const isWebhookEvent = githubObj.event_name === "repository_dispatch";
+  log.debug("isWebhookEvent: ", isWebhookEvent);
   const workflows = await getWorkflows({
     src: workflowsPath,
     context,
@@ -36,9 +50,32 @@ const run = async (options = {}) => {
   // create workflow dest dir
   await fs.ensureDir(path.resolve(destPath, "workflows"));
 
-  const needHandledWorkflows = workflows.filter(
+  let needHandledWorkflows = workflows.filter(
     (item) => item.triggers.length > 0
   );
+
+  //
+  if (isWebhookEvent) {
+    // only handle webhook event
+    needHandledWorkflows = needHandledWorkflows.filter((item) => {
+      const triggers = item.triggers;
+      let isMatchedWebhookEvent = false;
+      for (let index = 0; index < triggers.length; index++) {
+        const trigger = triggers[index];
+        if (trigger.trigger_name === "webhook") {
+          if (trigger.options && trigger.options.event) {
+            // specific evetn
+            if (trigger.options.event === githubObj.event_name) {
+              isMatchedWebhookEvent = true;
+            }
+          } else {
+            isMatchedWebhookEvent = true;
+          }
+        }
+      }
+      return isMatchedWebhookEvent;
+    });
+  }
   log.debug(
     "needHandledWorkflows",
     JSON.stringify(
@@ -62,7 +99,7 @@ const run = async (options = {}) => {
         results: [],
       };
       try {
-        triggerResult = await runTrigger(trigger);
+        triggerResult = await runTrigger({ trigger, context });
         log.debug("triggerResult", triggerResult);
       } catch (error) {
         throw error;
@@ -93,13 +130,13 @@ const run = async (options = {}) => {
   // build native event
   await buildNativeEvent({
     dest: destPath,
-    githubJson: process.env.JSON_GITHUB,
+    github: githubObj,
   });
   // build secret
 
   await buildNativeSecrets({
     dest: destPath,
-    secretsJson: process.env.JSON_SECRETS,
+    secrets: secretObj,
   });
 };
 

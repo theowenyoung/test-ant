@@ -3,7 +3,7 @@ const helpers = require("./helpers");
 const log = require("./log");
 const { createContentDigest, getCache } = helpers;
 const MAX_CACHE_KEYS_COUNT = 1000;
-const run = async (trigger = {}) => {
+const run = async ({ trigger, context } = {}) => {
   log.debug("trigger:", trigger);
   const finalResult = {
     results: [],
@@ -24,6 +24,7 @@ const run = async (trigger = {}) => {
     const triggerOptions = {
       helpers: triggerHelpers,
       options: trigger.options,
+      context: context,
     };
     const Trigger = triggers[trigger.trigger_name];
     const triggerInstance = new Trigger();

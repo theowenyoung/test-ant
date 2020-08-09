@@ -133,19 +133,9 @@ const buildWorkflow = async (options = {}) => {
 };
 const buildNativeEvent = async (options = {}) => {
   const baseDest = options.dest;
-  const githubJson = options.githubJson;
+  const github = options.github;
   const destWorkflowEventPath = path.resolve(baseDest, "event.json");
   let eventJson = "{}";
-  let github = {};
-  try {
-    github = JSON.parse(githubJson);
-    if (!github) {
-      github = {};
-    }
-  } catch (error) {
-    log.error("parse JSON_GITHUB error:", error);
-    throw error;
-  }
   eventJson = JSON.stringify(github.event, null, 2);
   await fs.outputFile(destWorkflowEventPath, eventJson);
   log.debug("build event file success", destWorkflowEventPath);
@@ -157,14 +147,7 @@ const buildNativeEvent = async (options = {}) => {
 };
 const buildNativeSecrets = async (options = {}) => {
   const baseDest = options.dest;
-  const secretsJson = options.secretsJson;
-  let secretsObj = {};
-  try {
-    secretsObj = JSON.parse(secretsJson);
-  } catch (error) {
-    log.error("parse SECRETS_JSON json error:", error);
-    throw error;
-  }
+  const secretsObj = options.secrets;
 
   const destWorkflowSecretsPath = path.resolve(baseDest, ".secrets");
   let secrets = "";
