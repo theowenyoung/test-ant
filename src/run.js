@@ -20,9 +20,18 @@ const run = async (options = {}) => {
   const { base } = options;
   const workflowsPath = path.resolve(base, options.workflows);
   const destPath = path.resolve(base, options.dest);
-
+  let secretObj = {};
+  try {
+    secretObj = JSON.parse(process.env.JSON_SECRETS);
+  } catch (error) {
+    log.error("parse secret json error: ", error);
+  }
+  const context = {
+    secrets: secretObj,
+  };
   const workflows = await getWorkflows({
     src: workflowsPath,
+    context,
   });
   log.debug("workflows", workflows);
   // create workflow dest dir
@@ -48,6 +57,7 @@ const run = async (options = {}) => {
         for (let index = 0; index < triggerResult.results.length; index++) {
           const element = triggerResult.results[index];
           workflowTodos.push({
+            context: context,
             dest: destPath,
             workflow: workflow,
             eventContext: {

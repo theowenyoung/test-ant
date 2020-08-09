@@ -6,17 +6,34 @@ const fs = require("fs-extra");
 const log = require("./log");
 const supportEventTypes = ["rss"];
 const { template } = require("./util");
-const getSupportedEvents = (doc) => {
+const getSupportedEvents = (doc, context) => {
   const events = [];
   if (doc && doc.on) {
     const keys = Object.keys(doc.on);
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
       if (supportEventTypes.includes(key)) {
+        // handle context expresstion
+        const newOptions = mapObj(
+          doc.on[key],
+          (key, value) => {
+            if (typeof value === "string") {
+              // if supported
+
+              value = template(value, context, {
+                shouldReplaceUndefinedToEmpty: true,
+              });
+            }
+            return [key, value];
+          },
+          {
+            deep: true,
+          }
+        );
         // valid event
         events.push({
           event_name: key,
-          options: doc.on[key],
+          options: newOptions,
         });
       }
     }
@@ -27,9 +44,7 @@ const getWorkflows = async (options = {}) => {
   if (!options.src) {
     throw new Error("Can not found src options");
   }
-  const { src: workflowsPath } = options;
-  console.log("workflowsPath", workflowsPath);
-
+  const { src: workflowsPath, context } = options;
   // get all files with json object
   const entries = await fg(["**/*.yml", "**/*.yaml"], {
     cwd: workflowsPath,
@@ -43,7 +58,7 @@ const getWorkflows = async (options = {}) => {
     try {
       const doc = yaml.safeLoad(await fs.readFile(filePath, "utf8"));
       if (doc) {
-        let events = getSupportedEvents(doc);
+        let events = getSupportedEvents(doc, context);
         workflows.push({
           path: filePath,
           relativePath: entries[index],
@@ -65,6 +80,7 @@ const buildWorkflow = async (options = {}) => {
   log.debug("buildWorkflow options:", options);
   const {
     eventContext: { event_name, payload, id },
+    context: workflowContext,
     workflow,
     dest,
   } = options;
@@ -82,8 +98,8 @@ const buildWorkflow = async (options = {}) => {
   const workflowData = workflow.data;
 
   workflowData.on = { push: null };
-  console.log("workflowData", JSON.stringify(workflowData, null, 2));
   const context = {
+    ...workflowContext,
     on: {
       [event_name]: {
         outputs: payload,
@@ -91,6 +107,8 @@ const buildWorkflow = async (options = {}) => {
       },
     },
   };
+  log.debug("context", context);
+
   // handle context expresstion
   const newWorkflowData = mapObj(
     workflowData,
@@ -108,8 +126,6 @@ const buildWorkflow = async (options = {}) => {
       deep: true,
     }
   );
-  console.log("newWorkflowData", JSON.stringify(newWorkflowData, null, 2));
-
   const workflowContent = yaml.safeDump(newWorkflowData);
   await fs.outputFile(destWorkflowPath, workflowContent);
   return {

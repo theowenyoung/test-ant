@@ -1,7 +1,7 @@
 on:
   rss:
     type: new_item
-    url: https://rss.owenyoung.com/sale/douban-dog-group.xml
+    url: ${{ secrets.RSS_URL }}
     every: 5
 
 jobs:

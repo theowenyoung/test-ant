@@ -1,7 +1,7 @@
 const has = require("lodash.has");
 
 const template = function (text, object, options) {
-  let includeVariableRegex = /(^on)|(^toJson\(on\.?)/;
+  let includeVariableRegex = /(^on)|(^secrets)|(^toJson\(on\.?)/;
   let interpolate = /\$\{\{([\S\s]*?)\}\}/g;
   let shouldReplaceUndefinedToEmpty = false;
   if (options) {
@@ -34,6 +34,8 @@ const template = function (text, object, options) {
       if (matched) {
         variableName = matched[1];
       }
+      variableName = variableName.trim();
+
       if (has(object, variableName)) {
         return [
           stringify(
