@@ -75,7 +75,7 @@ const buildWorkflow = async (options = {}) => {
   const destWorkflowPath = path.resolve(
     dest,
     "workflows",
-    `${relativePathWithoutExt}-${id}.yaml`
+    `${id}-${relativePathWithoutExt}.yaml`
   );
   log.debug("destWorkflowPath", destWorkflowPath);
 

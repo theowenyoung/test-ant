@@ -51,7 +51,7 @@ const run = async (options = {}) => {
             dest: destPath,
             workflow: workflow,
             eventContext: {
-              id: `${event.event_name}-${triggerResult.id}-${index}`,
+              id: `${index}-${triggerResult.id}-${event.event_name}`,
               event_name: event.event_name,
               options: event.options,
               payload: element,
