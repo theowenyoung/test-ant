@@ -1,7 +1,5 @@
 on:
   telegram_bot:
-    events:
-      - photo
     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 jobs:
   ifttt:
