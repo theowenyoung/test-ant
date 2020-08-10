@@ -78,6 +78,7 @@ const run = async ({ trigger, context } = {}) => {
       // get cache
       let deduplicationKeys =
         (await triggerHelpers.cache.get("deduplicationKeys")) || [];
+      debug("deduplicationKeys cached", deduplicationKeys);
       const resultsKeyMaps = new Map();
       results.forEach((item, index) => {
         resultsKeyMaps.set(getItemKey(item), item);
