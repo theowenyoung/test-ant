@@ -36,27 +36,6 @@ We use github `repository_dispatch` event as webhook event, So you need to make 
 }
 ```
 
-### IFTTT Webhook Request example
-
-You can use ifttt webhook as a `then` action to trigger the webhook, here is an example
-
-- URL: `https://<github-user-name>:<github-personal-token>@api.github.com/repos/<github-user-name>/<github-repo-name>/dispatches`
-- Method: `POST`
-- Content Type: `application/json`
-- Body
-
-```json
-{
-  "event_type": "test",
-  "client_payload": {
-    "value1": "<<<{{Text}}>>>",
-    "key": "<<<{{AuthorName}}>>>"
-  }
-}
-```
-
-> Tips: if your field content need to be escaped, you should surround it with "<<<>>>"
-
 ### Curl example
 
 ```bash
@@ -98,6 +77,29 @@ axios(config)
     console.log(error);
   });
 ```
+
+### IFTTT Webhook Request example
+
+> !!Note, for some reason, ifttt can not post github api, always response 403 status code, I don't know the reason yet, I suspect it's a github api problem, but I'm not sure. if you know why, please let me know!
+
+You can use ifttt webhook as a `then` action to trigger the webhook, here is an example
+
+- URL: `https://<github-user-name>:<github-personal-token>@api.github.com/repos/<github-user-name>/<github-repo-name>/dispatches`
+- Method: `POST`
+- Content Type: `application/json`
+- Body
+
+```json
+{
+  "event_type": "test",
+  "client_payload": {
+    "value1": "<<<{{Text}}>>>",
+    "key": "<<<{{AuthorName}}>>>"
+  }
+}
+```
+
+> Tips: if your field content need to be escaped, you should surround it with "<<<>>>"
 
 ## Options
 
