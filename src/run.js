@@ -40,6 +40,17 @@ const run = async (options = {}) => {
     secrets: secretObj,
     github: githubObj,
   };
+  // build native event
+  await buildNativeEvent({
+    dest: destPath,
+    github: githubObj,
+  });
+  // build secret
+
+  await buildNativeSecrets({
+    dest: destPath,
+    secrets: secretObj,
+  });
   // if webhook event
   const isWebhookEvent = githubObj.event_name === "repository_dispatch";
   log.debug("isWebhookEvent: ", isWebhookEvent);
@@ -127,17 +138,6 @@ const run = async (options = {}) => {
   for (let i = 0; i < workflowTodos.length; i++) {
     await buildWorkflow(workflowTodos[i]);
   }
-  // build native event
-  await buildNativeEvent({
-    dest: destPath,
-    github: githubObj,
-  });
-  // build secret
-
-  await buildNativeSecrets({
-    dest: destPath,
-    secrets: secretObj,
-  });
 };
 
 module.exports = run;
