@@ -64,12 +64,15 @@ jobs:
         run: echo "::set-output name=result::$(cat $LOCAL_CACHE_DIR/$CACHE_KEY_FILE)"
       - name: Restore cache directory
         uses: actions/cache@v2
+        id: restore-cache
         if: ${{ steps.last-cache-key.outcome == 'success' }}
         with:
           key: ${{ runner.os }}-cache-${{ steps.last-cache-key.outputs.result }}
           path: .cache
       - run: ls -l ./.cache/caches
-      - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
+        if: steps.restore-cache.outcome == 'success'
+      # - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
+      #   if: steps.restore-cache.outcome == 'success'
       - run: yarn
       - run: yarn build
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
