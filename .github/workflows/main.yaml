@@ -80,18 +80,18 @@ jobs:
       - env:
           TTT: ${{ steps.latest-cache-dir-hash.outputs.hash }}
           SSS: ${{ steps.latest-cache-key.outputs.result }}
-        run: echo $TTT && echo $SSS && ls -l ./cache/caches
+        run: echo $TTT && echo $SSS && ls -l ./.cache/caches
       - name: Save cache directory
-        if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
+        # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
         with:
           key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}}
           path: .cache
       - name: Save cache key to file
-        if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
+        # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         run: mkdir ./public && echo ${{ steps.latest-cache-dir-hash.outputs.hash}} > ./public/$CACHE_KEY_FILE
       - name: Push cache branch
-        if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
+        # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: peaceiris/actions-gh-pages@v3.6.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
