@@ -46,9 +46,7 @@ const run = async ({ trigger, context } = {}) => {
     const lastUpdatedAt =
       (await triggerHelpers.cache.get("lastUpdatedAt")) || 0;
     log.debug("lastUpdatedAt: ", lastUpdatedAt);
-    if (skipFirst && lastUpdatedAt === 0) {
-      return finalResult;
-    }
+
     if (updateInterval) {
       // check if should update
       // unit minutes
@@ -78,7 +76,7 @@ const run = async ({ trigger, context } = {}) => {
       // get cache
       let deduplicationKeys =
         (await triggerHelpers.cache.get("deduplicationKeys")) || [];
-      debug("deduplicationKeys cached", deduplicationKeys);
+      log.debug("deduplicationKeys cached", deduplicationKeys);
       const resultsKeyMaps = new Map();
       results.forEach((item, index) => {
         resultsKeyMaps.set(getItemKey(item), item);
@@ -104,6 +102,10 @@ const run = async ({ trigger, context } = {}) => {
 
       // set cache
       await triggerHelpers.cache.set("deduplicationKeys", deduplicationKeys);
+    }
+
+    if (skipFirst && lastUpdatedAt === 0) {
+      return finalResult;
     }
     finalResult.results = results;
   }
