@@ -76,7 +76,7 @@ const run = async ({ trigger, context } = {}) => {
       // get cache
       let deduplicationKeys =
         (await triggerHelpers.cache.get("deduplicationKeys")) || [];
-      log.debug("deduplicationKeys cached", deduplicationKeys);
+      log.debug("get cached deduplicationKeys", deduplicationKeys);
       const resultsKeyMaps = new Map();
       results.forEach((item, index) => {
         resultsKeyMaps.set(getItemKey(item), item);
@@ -99,6 +99,7 @@ const run = async ({ trigger, context } = {}) => {
         results.map((item) => getItemKey(item))
       );
       deduplicationKeys = deduplicationKeys.slice(-MAX_CACHE_KEYS_COUNT);
+      log.debug("set deduplicationKeys", deduplicationKeys);
 
       // set cache
       await triggerHelpers.cache.set("deduplicationKeys", deduplicationKeys);
