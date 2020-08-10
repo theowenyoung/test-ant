@@ -51,22 +51,22 @@ jobs:
               }
             })
       - name: Get cache key from last build cache key
-        id: latest-cache-key-file-loaded
+        id: last-cache-key-file-loaded
         if: steps.isCacheBranchExist.outputs.result == 'true'
         uses: actions/checkout@v2
         continue-on-error: true
         with:
           ref: ${{ env.CACHE_BRANCH }}
           path: ${{ env.LOCAL_CACHE_DIR }}
-      - name: Get latest cache key content
-        if: ${{ steps.latest-cache-key-file-loaded.outcome == 'success' }}
-        id: latest-cache-key
+      - name: Get last cache key content
+        if: ${{ steps.last-cache-key-file-loaded.outcome == 'success' }}
+        id: last-cache-key
         run: echo "::set-output name=result::$(cat $LOCAL_CACHE_DIR/$CACHE_KEY_FILE)"
       - name: Restore cache directory
         uses: actions/cache@v2
-        if: ${{ steps.latest-cache-key.outcome == 'success' }}
+        if: ${{ steps.last-cache-key.outcome == 'success' }}
         with:
-          key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-key.outputs.result }}
+          key: ${{ runner.os }}-cache-${{ steps.last-cache-key.outputs.result }}
           path: .cache
       - run: ls -l ./.cache/caches
       - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
@@ -80,14 +80,14 @@ jobs:
         with:
           path: .cache
       - env:
-          TTT: ${{ steps.latest-cache-dir-hash.outputs.hash }}
-          SSS: ${{ steps.latest-cache-key.outputs.result }}
-        run: echo $TTT && echo $SSS && ls -l ./.cache/caches
-      - name: Save cache directory
+          LATEST_CACHE_FOLDER_HASH: ${{ steps.latest-cache-dir-hash.outputs.hash }}
+          LAST_CACHE_FOLDER_HASH: ${{ steps.last-cache-key.outputs.result }}
+        run: echo $LATEST_CACHE_FOLDER_HASH && echo $LAST_CACHE_FOLDER_HASH && ls -l ./.cache/caches
+      - name: upload cache
         # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
         with:
-          key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-dir-hash.outputs.hash}}
+          key: ${{ runner.os }}-cache-${{ steps.latest-cache-dir-hash.outputs.hash}}
           path: .cache
       - name: Save cache key to file
         # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
