@@ -56,3 +56,7 @@ jobs:
 | every           | number        | false    | 5                                                                            | rss fetch interval, unit: minutes                                                 | 5        |
 | max_items_count | number        | false    | 15                                                                           | The feed items max length, default is none, it will response all feed items       |
 | skip_first      | boolean       | false    | true                                                                         | If should skip first fetch items                                                  | false    |
+
+## Outputs
+
+See [rss-parser](https://github.com/rbren/rss-parser), The outputs will be the feed item
