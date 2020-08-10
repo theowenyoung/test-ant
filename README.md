@@ -2,6 +2,26 @@
 
 Make github actions great again!
 
+So easy for get rss update!
+
+```yaml
+on:
+  rss:
+    url: https://hnrss.org/newest?points=300
+jobs:
+  ifttt:
+    name: Make a Request to IFTTT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: alfredosalzillo/ifttt-webhook-action@v1
+        with:
+          event: test
+          key: ${{ secrets.IFTTT_KEY }}
+          value1: ${{on.rss.outputs.title}}
+          value2: ${{on.rss.outputs.content}}
+          value3: ${{on.rss.outputs.link}}
+```
+
 ## Features
 
 - manual get rss/json api updates
