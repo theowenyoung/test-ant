@@ -80,11 +80,13 @@ axios(config)
 
 ### IFTTT Webhook Request example
 
-> !!Note, for some reason, ifttt can not post github api, always response 403 status code, I don't know the reason yet, I suspect it's a github api problem, but I'm not sure. if you know why, please let me know!
+> !!Note, for some reason, ifttt can not post github api directly, always response 403 status code, I don't know the reason yet, I suspect it's a github api problem, but I'm not sure. if you know why, please let me know!
+
+So, I create a webhook relay api for forward ifttt request to other service. So you can use it like this:
 
 You can use ifttt webhook as a `then` action to trigger the webhook, here is an example
 
-- URL: `https://<github-user-name>:<github-personal-token>@api.github.com/repos/<github-user-name>/<github-repo-name>/dispatches`
+- URL: `https://<github-user-name>:<github-personal-token>@eno9s1l2xztg49j.m.pipedream.net/https://api.github.com/repos/<github-user-name>/<github-repo-name>/dispatches`
 - Method: `POST`
 - Content Type: `application/json`
 - Body
