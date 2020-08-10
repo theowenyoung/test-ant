@@ -69,8 +69,8 @@ jobs:
         with:
           key: ${{ runner.os }}-cache-${{ steps.last-cache-key.outputs.result }}
           path: .cache
-      - run: ls -l ./.cache/caches
-        if: steps.restore-cache.outcome == 'success'
+      # - run: ls -l ./.cache/caches
+      #   if: steps.restore-cache.outcome == 'success'
       # - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
       #   if: steps.restore-cache.outcome == 'success'
       - run: yarn

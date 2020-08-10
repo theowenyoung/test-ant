@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/theowenyoung/test-ant#readme",
   "devDependencies": {
+    "hashdirectory": "^0.1.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
   },
