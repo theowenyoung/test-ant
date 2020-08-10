@@ -2,7 +2,7 @@
 
 ## Events
 
-### New Item in json api
+### New Message in telegram bot
 
 ```yaml
 on:
