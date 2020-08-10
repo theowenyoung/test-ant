@@ -1,4 +1,4 @@
-# Action Ant
+# Actions Plus
 
 Make github actions great again!
 
