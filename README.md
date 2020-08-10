@@ -26,6 +26,7 @@ jobs:
 
 - manual get rss/json api updates
 - support webhooks
+- support telegram bot updates
 - support almost all github actions
 
 ## Supported Triggers
@@ -33,6 +34,7 @@ jobs:
 - [rss](/docs/triggers/rss.md) polling a rss for updates
 - [poll](/docs/triggers/poll.md) polling a json api for updates
 - [webhook](/docs/triggers/webhook.md) receive a webhook
+- [telegram bot](/docs/triggers/telegram_bot.md) polling telegram bot updates
 
 ## Supported Actions
 

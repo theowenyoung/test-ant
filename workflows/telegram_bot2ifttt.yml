@@ -1,7 +1,8 @@
 on:
-  poll:
-    url: https://jsonplaceholder.typicode.com/posts
-    max_items_count: 5
+  telegram_bot:
+    events:
+      - photo
+    token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 jobs:
   ifttt:
     name: Make a Request to IFTTT
@@ -11,5 +12,4 @@ jobs:
         with:
           event: test
           key: ${{ secrets.IFTTT_KEY }}
-          value1: ${{ on.poll.outputs.id }}
-          value2: ${{ toJson(on.poll.outputs) }}
+          value1: ${{ toJson(on.telegram_bot.outputs) }}
