@@ -36,4 +36,4 @@ And, We use [Axios](https://github.com/axios/axios) for poll data, so your can p
 
 ## Outputs
 
-The item of the api results, and `_rawBody` for the whole raw body
+The item of the api results, and `raw__body` for the whole raw body

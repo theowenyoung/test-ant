@@ -46,7 +46,7 @@ module.exports = class {
       const deepClonedData = clonedeep(resultsArray);
       resultsArray.forEach((item) => {
         // @ts-ignore
-        item._rawBody = deepClonedData;
+        item.raw__body = deepClonedData;
         results.push(item);
       });
     }
