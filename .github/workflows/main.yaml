@@ -86,6 +86,7 @@ jobs:
           LATEST_CACHE_FOLDER_HASH: ${{ steps.latest-cache-dir-hash.outputs.hash }}
           LAST_CACHE_FOLDER_HASH: ${{ steps.last-cache-key.outputs.result }}
         run: echo $LATEST_CACHE_FOLDER_HASH && echo $LAST_CACHE_FOLDER_HASH && ls -l ./.cache/caches
+      - run: cat ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1/diskstore-daf2652dddd6d6fc605cb1dabe3cb472.json
       - name: upload cache
         # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
