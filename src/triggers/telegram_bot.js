@@ -81,6 +81,7 @@ module.exports = class {
       resultsArray.forEach((item) => {
         // @ts-ignore
         const message = item.message;
+        message.update_id = item.update_id;
         const messageType = _messageTypes.find((messageType) => {
           return message[messageType];
         });
