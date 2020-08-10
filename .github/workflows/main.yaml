@@ -73,6 +73,7 @@ jobs:
       #   if: steps.restore-cache.outcome == 'success'
       # - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
       #   if: steps.restore-cache.outcome == 'success'
+      - run: ls -l ./.cache/caches
       - run: cat ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1/diskstore-daf2652dddd6d6fc605cb1dabe3cb472.json
       - name: Get current cache dir hash
         id: current-cache-dir-hash
