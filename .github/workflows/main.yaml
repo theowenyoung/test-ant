@@ -68,6 +68,8 @@ jobs:
         with:
           key: ${{ runner.os }}-cache-directory-${{ steps.latest-cache-key.outputs.result }}
           path: .cache
+      - run: ls -l ./.cache/caches
+      - run: ls -l ./.cache/caches/trigger-03c047ec7f9dd1ae6a339e2c24cfcc60
       - run: yarn
       - run: yarn build
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
