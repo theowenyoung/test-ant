@@ -22,7 +22,6 @@ const getSupportedTriggers = (doc, context) => {
             (key, value) => {
               if (typeof value === "string") {
                 // if supported
-
                 value = template(value, context, {
                   shouldReplaceUndefinedToEmpty: true,
                 });
@@ -37,7 +36,7 @@ const getSupportedTriggers = (doc, context) => {
 
         // valid event
         triggers.push({
-          trigger_name: key,
+          name: key,
           options: newOptions || {},
         });
       }
@@ -87,7 +86,7 @@ const buildWorkflow = async (options = {}) => {
     context: workflowContext,
     workflow,
     dest,
-    trigger_name,
+    name,
     payload,
     id,
   } = options;
@@ -106,7 +105,7 @@ const buildWorkflow = async (options = {}) => {
   const context = {
     ...workflowContext,
     on: {
-      [trigger_name]: {
+      [name]: {
         outputs: payload,
         options: options.options,
       },

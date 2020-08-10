@@ -8,13 +8,16 @@ const run = async ({ trigger, context } = {}) => {
   const finalResult = {
     results: [],
   };
-  if (triggers[trigger.trigger_name]) {
+  if (triggers[trigger.name]) {
     // get unique id
     let triggerId = "";
     if (trigger.options && trigger.options.id) {
       triggerId = trigger.options.id;
     } else {
-      triggerId = createContentDigest(trigger);
+      triggerId = createContentDigest({
+        name: trigger.name,
+        path: trigger.workflowRelativePath,
+      });
     }
     finalResult.id = triggerId;
     const triggerHelpers = {
@@ -26,7 +29,7 @@ const run = async ({ trigger, context } = {}) => {
       options: trigger.options,
       context: context,
     };
-    const Trigger = triggers[trigger.trigger_name];
+    const Trigger = triggers[trigger.name];
     const triggerInstance = new Trigger();
 
     let {

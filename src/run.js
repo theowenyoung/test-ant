@@ -73,7 +73,7 @@ const run = async (options = {}) => {
       let isMatchedWebhookEvent = false;
       for (let index = 0; index < triggers.length; index++) {
         const trigger = triggers[index];
-        if (trigger.trigger_name === "webhook") {
+        if (trigger.name === "webhook") {
           if (trigger.options && trigger.options.event) {
             // specific evetn
             if (trigger.options.event === githubObj.event.action) {
@@ -110,7 +110,13 @@ const run = async (options = {}) => {
         results: [],
       };
       try {
-        triggerResult = await runTrigger({ trigger, context });
+        triggerResult = await runTrigger({
+          trigger: {
+            ...trigger,
+            workflowRelativePath: workflow.relativePath,
+          },
+          context,
+        });
         log.debug("triggerResult", triggerResult);
       } catch (error) {
         throw error;
@@ -124,8 +130,8 @@ const run = async (options = {}) => {
           workflowTodos.push({
             dest: destPath,
             workflow: workflow,
-            id: `${workflowIndex}-${triggerResult.id}-${trigger.trigger_name}`,
-            trigger_name: trigger.trigger_name,
+            id: `${workflowIndex}-${triggerResult.id}-${trigger.name}`,
+            name: trigger.name,
             options: trigger.options,
             payload: element,
             context: context,
