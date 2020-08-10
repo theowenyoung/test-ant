@@ -1,6 +1,6 @@
 # RSS
 
-## Usage
+## Events
 
 ### New Item in Feed
 
