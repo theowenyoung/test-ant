@@ -74,12 +74,15 @@ jobs:
       # - run: ls -l ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1
       #   if: steps.restore-cache.outcome == 'success'
       - run: ls -l ./.cache/caches
-      - run: cat ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1/diskstore-daf2652dddd6d6fc605cb1dabe3cb472.json
+
       - name: Get current cache dir hash
         id: current-cache-dir-hash
         uses: theowenyoung/folder-hash@v2.0.1
         with:
           path: .cache
+      - env:
+          CURRENT_CACHE_FOLDER_HASH: ${{ steps.current-cache-dir-hash.outputs.hash }}
+        run: echo $CURRENT_CACHE_FOLDER_HASH && ls -l ./.cache/caches
       - run: yarn
       - run: yarn build
       - run: curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
@@ -94,7 +97,7 @@ jobs:
           LATEST_CACHE_FOLDER_HASH: ${{ steps.latest-cache-dir-hash.outputs.hash }}
           LAST_CACHE_FOLDER_HASH: ${{ steps.last-cache-key.outputs.result }}
         run: echo $CURRENT_CACHE_FOLDER_HASH && echo $LATEST_CACHE_FOLDER_HASH && echo $LAST_CACHE_FOLDER_HASH && ls -l ./.cache/caches
-      - run: cat ./.cache/caches/trigger-ef2bf44fd3010e5dac469f15f1279ef1/diskstore-daf2652dddd6d6fc605cb1dabe3cb472.json
+
       - name: upload cache
         # if: steps.latest-cache-dir-hash.outputs.hash != steps.latest-cache-key.outputs.result
         uses: actions/cache@v2
