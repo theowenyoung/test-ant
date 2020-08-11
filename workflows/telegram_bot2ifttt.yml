@@ -6,8 +6,8 @@ jobs:
     name: Make a Request to IFTTT
     runs-on: ubuntu-latest
     steps:
-      - uses: hugoalh/GitHubAction.SendToIFTTT@v1.1.7
+      - uses: actionflow/ifttt-webhook-action@v1
         with:
-          webhook_eventname: test
-          webhook_key: ${{ secrets.IFTTT_KEY }}
+          event: test
+          key: ${{ secrets.IFTTT_KEY }}
           value1: ${{ toJson(on.telegram_bot.outputs) }}
