@@ -6,7 +6,7 @@ on:
       - https://rss.owenyoung.com/sale/douban-pin-group.xml
       - https://rss.owenyoung.com/sale/douban-driver-group.xml
       - https://rss.owenyoung.com/sale/douban-dog-group.xml
-      - https://rss.owenyoung.com/douban/group/698716.xml
+      - https://rss.owenyoung.com/douban/group/blabla.xml
 jobs:
   ifttt:
     name: Make a Request to IFTTT
