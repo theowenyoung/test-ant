@@ -6,7 +6,7 @@ jobs:
     name: Make a Request to IFTTT
     runs-on: ubuntu-latest
     steps:
-      - uses: actionflow/ifttt-webhook-action@v1
+      - uses: actionflow/ifttt-webhook-action@master
         with:
           event: test
           key: ${{ secrets.IFTTT_KEY }}
