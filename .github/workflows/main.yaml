@@ -5,13 +5,10 @@ jobs:
     name: Make a Request to IFTTT
     runs-on: ubuntu-latest
     steps:
-      - uses: alfredosalzillo/ifttt-webhook-action@v1
+      - uses: actionflow/ifttt-webhook-action@master
         with:
           event: test
-          key: pT3ep7_bITg-RI34c9QqJx6ke8rumcoRQvIYBmLSbkY
-          value1: 你好呵呵呵呵呵呵
-          value2: |-
-            姐妹们！我又来啦！
-
-            一淘领30-10元券（修改了...
-          value3: "https://m.douban.com/group/topic/188662086/"
+          key: ${{ secrets.IFTTT_KEY }}
+          value1: 111
+          value2: 222
+          value3: 333
