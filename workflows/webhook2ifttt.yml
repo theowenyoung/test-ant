@@ -6,10 +6,10 @@ jobs:
     name: Make a Request to IFTTT
     runs-on: ubuntu-latest
     steps:
-      - uses: hugoalh/GitHubAction.SendToIFTTT@v1.1.7
+      - uses: actionflow/ifttt-webhook-action@master
         with:
-          webhook_eventname: test
-          webhook_key: ${{ secrets.IFTTT_KEY }}
+          event: test
+          key: ${{ secrets.IFTTT_KEY }}
           value1: ${{ on.webhook.outputs.event }}
           value2: ${{ toJson(on.webhook.outputs.payload) }}
           value3: ${{ toJson(on.webhook.outputs.body) }}
