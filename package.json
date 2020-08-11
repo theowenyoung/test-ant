@@ -8,7 +8,7 @@
     "build": "yarn clean:dist && node src/index.js",
     "clean:dist": "rm -rf ./dist",
     "clean": "yarn clean:dist && rm -rf .cache",
-    "act": "act -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json",
+    "act": "act -r -W ./dist/workflows --secret-file ./dist/.secrets -e ./dist/event.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
