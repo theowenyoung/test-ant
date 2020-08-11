@@ -1,0 +1,18 @@
+"on":
+  push: null
+jobs:
+  ifttt:
+    name: Make a Request to IFTTT
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actionflow/ifttt-webhook-action@master
+        with:
+          event: test
+          key: pT3ep7_bITg-RI34c9QqJx6ke8rumcoRQvIYBmLSbkY
+          value1: "过几天去重庆 哪家火锅强  [来自: \U0001F923\U0001F923\U0001F923]"
+          value2: |-
+            我要一家一家吃！
+
+
+            下面是进不了组的姐妹发的私信...
+          value3: "https://m.douban.com/group/topic/188551628/"
