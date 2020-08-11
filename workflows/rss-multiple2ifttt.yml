@@ -2,6 +2,7 @@ on:
   rss:
     event: new_item_in_multiple_feeds
     # skip_first: true
+    every: 1
     urls:
       - https://rss.owenyoung.com/sale/douban-pin-group.xml
       - https://rss.owenyoung.com/sale/douban-driver-group.xml
