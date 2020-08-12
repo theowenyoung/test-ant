@@ -1,6 +1,5 @@
 const crypto = require("crypto");
 const objectHash = require("node-object-hash");
-const { BinaryLike } = crypto;
 const hasher = objectHash({
   coerce: false,
   alg: `md5`,
