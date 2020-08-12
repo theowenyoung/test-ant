@@ -8,6 +8,8 @@ on:
       - https://rss.owenyoung.com/sale/douban-driver-group.xml
       - https://rss.owenyoung.com/sale/douban-dog-group.xml
       - https://rss.owenyoung.com/douban/group/blabla.xml
+      - https://rss.owenyoung.com/douban/group/669481.xml
+      - https://rss.owenyoung.com/douban/group/586674.xml
 jobs:
   ifttt:
     name: Make a Request to IFTTT
