@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs-extra");
 const {
-  buildWorkflow,
+  buildSingleWorkflow,
   getWorkflows,
   buildNativeEvent,
   buildNativeSecrets,
@@ -99,10 +99,16 @@ const run = async (options = {}) => {
   );
 
   const workflowTodos = [];
-  let workflowIndex = 0;
+  let triggerIndex = 0;
   for (let i = 0; i < needHandledWorkflows.length; i++) {
     const workflow = needHandledWorkflows[i];
     const triggers = workflow.triggers || [];
+    const workflowTodo = {
+      dest: destPath,
+      workflow: workflow,
+      context: context,
+      triggers: [],
+    };
     // manual run trigger
     for (let j = 0; j < triggers.length; j++) {
       const trigger = triggers[j];
@@ -126,23 +132,23 @@ const run = async (options = {}) => {
         // check is need to run workflowTodos
         for (let index = 0; index < triggerResult.results.length; index++) {
           const element = triggerResult.results[index];
-
-          workflowTodos.push({
-            dest: destPath,
-            workflow: workflow,
-            id: `${workflowIndex}-${triggerResult.id}-${trigger.name}`,
+          workflowTodo.triggers.push({
+            id: `${triggerIndex}-${triggerResult.id}-${trigger.name}`,
             name: trigger.name,
             options: trigger.options,
             payload: element,
-            context: context,
           });
-          workflowIndex++;
+          triggerIndex++;
         }
       }
     }
+    workflowTodos.push(workflowTodo);
   }
-  for (let i = 0; i < workflowTodos.length; i++) {
-    await buildWorkflow(workflowTodos[i]);
+  for (let index = 0; index < workflowTodos.length; index++) {
+    const element = workflowTodos[index];
+    if (element.triggers.length > 0) {
+      await buildSingleWorkflow(element);
+    }
   }
 };
 

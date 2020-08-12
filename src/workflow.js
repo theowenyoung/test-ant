@@ -80,6 +80,185 @@ const getWorkflows = async (options = {}) => {
   return workflows;
 };
 
+const getJobsDependences = (jobs) => {
+  const jobKeys = Object.keys(jobs);
+  const jobsWhoHasNeeds = [];
+  const jobsNoNeeds = [];
+  jobKeys.forEach((jobKey) => {
+    const job = jobs[jobKey];
+    console.log("job", job);
+
+    if (job && job.needs && job.needs.length > 0) {
+      jobsWhoHasNeeds.push({
+        id: jobKey,
+        needs: job.needs,
+      });
+    }
+    if (!job.needs || job.needs.length === 0) {
+      jobsNoNeeds.push(jobKey);
+    }
+  });
+  console.log("jobsNoNeeds", jobsNoNeeds);
+
+  let lastJobs = [];
+  let beNeededJobs = [];
+  console.log("jobsWhoHasNeeds", jobsWhoHasNeeds);
+
+  jobsWhoHasNeeds.forEach((job) => {
+    job.needs.forEach((beNeededJob) => {
+      const isBeNeeded = jobsWhoHasNeeds.find(
+        (item) => item.id === beNeededJob
+      );
+      if (isBeNeeded) {
+        beNeededJobs.push(beNeededJob);
+      }
+    });
+  });
+  beNeededJobs = [...new Set(beNeededJobs)];
+  console.log("beNeededJobs", beNeededJobs);
+
+  jobsWhoHasNeeds.forEach((job) => {
+    if (!beNeededJobs.includes(job.id)) {
+      lastJobs.push(job.id);
+    }
+  });
+  if (lastJobs.length === 0) {
+    lastJobs = jobKeys;
+  }
+  return { lastJobs, firstJobs: jobsNoNeeds };
+};
+
+const renameJobsBySuffix = (jobs, suffix) => {
+  const jobKeys = Object.keys(jobs);
+  const newJobs = {};
+  jobKeys.forEach((jobKey) => {
+    const job = jobs[jobKey];
+    const newJobKey = `${jobKey}${suffix}`;
+    if (job.needs) {
+      job.needs = job.needs.map((item) => {
+        return `${item}${suffix}`;
+      });
+    }
+    newJobs[newJobKey] = job;
+  });
+  return newJobs;
+};
+const buildSingleWorkflow = async (options = {}) => {
+  log.debug("buildWorkflow options:", options);
+  const { context: workflowContext, workflow, dest, triggers } = options;
+  const relativePathWithoutExt = workflow.relativePath
+    .split(".")
+    .slice(0, -1)
+    .join(".");
+  const destWorkflowPath = path.resolve(
+    dest,
+    "workflows",
+    `${relativePathWithoutExt}.yaml`
+  );
+  const workflowData = workflow.data;
+  // handle context expresstion
+  const workflowDataJobs = workflowData.jobs;
+  delete workflowData.jobs;
+  const newWorkflowData = workflowData;
+  const jobsGroups = [];
+  for (let index = 0; index < triggers.length; index++) {
+    const trigger = triggers[index];
+    const { payload, name, id, options: triggerOptions } = trigger;
+    const context = {
+      ...workflowContext,
+      on: {
+        [name]: {
+          outputs: payload,
+          options: triggerOptions,
+        },
+      },
+    };
+    // handle context expresstion
+    const newJobs = mapObj(
+      workflowDataJobs,
+      (key, value) => {
+        if (typeof value === "string") {
+          // if supported
+
+          value = template(value, context, {
+            shouldReplaceUndefinedToEmpty: true,
+          });
+        }
+        return [key, value];
+      },
+      {
+        deep: true,
+      }
+    );
+
+    const jobs = renameJobsBySuffix(newJobs, `_${index}`);
+
+    // jobs id rename for merge
+
+    const jobsDependences = getJobsDependences(jobs);
+    jobsGroups.push({
+      lastJobs: jobsDependences.lastJobs,
+      firstJobs: jobsDependences.firstJobs,
+      jobs: jobs,
+    });
+  }
+
+  const finalJobs = {};
+
+  jobsGroups.forEach((jobsGroup, index) => {
+    console.log("jobsGroup", jobsGroup);
+
+    const jobs = jobsGroup.jobs;
+    const jobKeys = Object.keys(jobs);
+
+    if (index > 0) {
+      jobKeys.forEach((jobKey) => {
+        const job = jobs[jobKey];
+        console.log("jobsGroup.firstJobs"), jobsGroup.firstJobs;
+        console.log(
+          "jobsGroups[index - 1].lastJobs",
+          jobsGroups[index - 1].lastJobs
+        );
+
+        if (jobsGroup.firstJobs.includes(jobKey)) {
+          if (Array.isArray(job.needs)) {
+            job.needs = job.needs.concat(jobsGroups[index - 1].lastJobs);
+          } else {
+            job.needs = jobsGroups[index - 1].lastJobs;
+          }
+          finalJobs[jobKey] = job;
+        } else {
+          finalJobs[jobKey] = job;
+        }
+      });
+    } else {
+      jobKeys.forEach((jobKey) => {
+        const job = jobs[jobKey];
+        finalJobs[jobKey] = job;
+      });
+    }
+  });
+  // finalJobs name unique for act unique name
+  const finalJobKeys = Object.keys(finalJobs);
+  finalJobKeys.forEach((jobKey, index) => {
+    const job = finalJobs[jobKey];
+    job.name = `${job.name} ${index}`;
+    finalJobs[jobKey] = job;
+  });
+  console.log("finalJobs", JSON.stringify(finalJobs, null, 2));
+
+  newWorkflowData.on = {
+    push: null,
+  };
+  newWorkflowData.jobs = finalJobs;
+
+  const workflowContent = yaml.safeDump(newWorkflowData);
+  await fs.outputFile(destWorkflowPath, workflowContent);
+  return {
+    workflow: newWorkflowData,
+  };
+};
+
 const buildWorkflow = async (options = {}) => {
   log.debug("buildWorkflow options:", options);
   const {
@@ -167,6 +346,7 @@ const buildNativeSecrets = async (options = {}) => {
 module.exports = {
   getWorkflows,
   buildWorkflow,
+  buildSingleWorkflow,
   buildNativeEvent,
   buildNativeSecrets,
 };
