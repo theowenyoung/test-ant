@@ -1,4 +1,4 @@
-name: Actions Plus Jobs
+name: Action Flow Jobs
 on:
   repository_dispatch:
   workflow_dispatch:
