@@ -67,6 +67,7 @@ jobs:
           path: .cache
       - name: Get current cache hash
         id: current-cache-hash
+        if: ${{ steps.restore-cache.outcome == 'success' }}
         uses: theowenyoung/folder-hash@v2
         with:
           path: .cache
