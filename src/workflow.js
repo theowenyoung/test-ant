@@ -86,8 +86,6 @@ const getJobsDependences = (jobs) => {
   const jobsNoNeeds = [];
   jobKeys.forEach((jobKey) => {
     const job = jobs[jobKey];
-    console.log("job", job);
-
     if (job && job.needs && job.needs.length > 0) {
       jobsWhoHasNeeds.push({
         id: jobKey,
@@ -98,12 +96,9 @@ const getJobsDependences = (jobs) => {
       jobsNoNeeds.push(jobKey);
     }
   });
-  console.log("jobsNoNeeds", jobsNoNeeds);
 
   let lastJobs = [];
   let beNeededJobs = [];
-  console.log("jobsWhoHasNeeds", jobsWhoHasNeeds);
-
   jobsWhoHasNeeds.forEach((job) => {
     job.needs.forEach((beNeededJob) => {
       const isBeNeeded = jobsWhoHasNeeds.find(
@@ -115,8 +110,6 @@ const getJobsDependences = (jobs) => {
     });
   });
   beNeededJobs = [...new Set(beNeededJobs)];
-  console.log("beNeededJobs", beNeededJobs);
-
   jobsWhoHasNeeds.forEach((job) => {
     if (!beNeededJobs.includes(job.id)) {
       lastJobs.push(job.id);
@@ -206,20 +199,12 @@ const buildSingleWorkflow = async (options = {}) => {
   const finalJobs = {};
 
   jobsGroups.forEach((jobsGroup, index) => {
-    console.log("jobsGroup", jobsGroup);
-
     const jobs = jobsGroup.jobs;
     const jobKeys = Object.keys(jobs);
 
     if (index > 0) {
       jobKeys.forEach((jobKey) => {
         const job = jobs[jobKey];
-        console.log("jobsGroup.firstJobs"), jobsGroup.firstJobs;
-        console.log(
-          "jobsGroups[index - 1].lastJobs",
-          jobsGroups[index - 1].lastJobs
-        );
-
         if (jobsGroup.firstJobs.includes(jobKey)) {
           if (Array.isArray(job.needs)) {
             job.needs = job.needs.concat(jobsGroups[index - 1].lastJobs);
@@ -245,8 +230,6 @@ const buildSingleWorkflow = async (options = {}) => {
     job.name = `${job.name} ${index}`;
     finalJobs[jobKey] = job;
   });
-  console.log("finalJobs", JSON.stringify(finalJobs, null, 2));
-
   newWorkflowData.on = {
     push: null,
   };
