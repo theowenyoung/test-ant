@@ -98,14 +98,19 @@ const run = async ({ trigger, context } = {}) => {
       if (maxItemsCount) {
         results = results.slice(0, maxItemsCount);
       }
-      deduplicationKeys = deduplicationKeys.concat(
-        results.map((item) => getItemKey(item))
-      );
-      deduplicationKeys = deduplicationKeys.slice(-MAX_CACHE_KEYS_COUNT);
-      log.debug("set deduplicationKeys", deduplicationKeys);
+      // if save to cache
+      if (results.length > 0) {
+        deduplicationKeys = deduplicationKeys.concat(
+          results.map((item) => getItemKey(item))
+        );
+        deduplicationKeys = deduplicationKeys.slice(-MAX_CACHE_KEYS_COUNT);
+        log.debug("set deduplicationKeys", deduplicationKeys);
 
-      // set cache
-      await triggerHelpers.cache.set("deduplicationKeys", deduplicationKeys);
+        // set cache
+        await triggerHelpers.cache.set("deduplicationKeys", deduplicationKeys);
+      } else {
+        log.debug("no items update, do not need to update cache");
+      }
     }
 
     if (skipFirst && lastUpdatedAt === 0) {
